@@ -1,0 +1,367 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.babee.community.dao.CommunityDAO">
+	<!-- 리절트 맵 정의 -->
+	<resultMap id="freeboardResult" type="FreeboardVO">
+		<result property="articleNO" column="articleNO" />
+		<result property="free_title" column="free_title" />
+		<result property="member_id" column="member_id" />
+		<result property="free_writeDate" column="free_writeDate" />
+		<result property="free_content" column="free_content" />
+		<result property="free_view_count" column="free_view_count" />
+		<result property="free_img" column="free_img" />
+		<result property="free_img_id" column="free_img_id" />
+		<result property="commentCnt" column="commentCnt" />
+	</resultMap>
+		
+	<resultMap id="commentResult" type="CommentVO">
+		<result property="free_commentNO" column="free_commentNO" />
+		<result property="member_id" column="member_id" />
+		<result property="free_comment" column="free_comment" />
+		<result property="seller_id" column="seller_id" />
+		<result property="free_commentDate" column="free_commentDate" />
+		<result property="articleNO" column="articleNO" />
+	</resultMap>
+	
+	<resultMap id="qnaResult" type="QnaVO">
+		<result property="articleNO" column="articleNO" />
+		<result property="member_id" column="member_id" />
+		<result property="qna_title" column="qna_title" />
+		<result property="qna_content" column="qna_content" />
+		<result property="qna_writeDate" column="qna_writeDate" />
+		<result property="qna_answer" column="qna_answer" />
+	</resultMap>
+	
+	<resultMap id="infoResult" type="InfoVO">
+		<result property="articleNO" column="articleNO" />
+		<result property="info_title" column="info_title" />
+		<result property="info_img" column="info_img" />
+		<result property="info_content" column="info_content" />
+		<result property="member_id" column="member_id" />
+		<result property="info_img_id" column="info_img_id" />
+	</resultMap>
+	
+	
+	
+	
+	<select id="selectALLFreeboardList" resultMap="freeboardResult" parameterType="String">
+		<![CDATA[
+		SELECT a.*, COALESCE(b.comment_count, 0) as commentCnt
+		FROM t_shopping_freeboard a
+		LEFT JOIN (
+    	SELECT articleNO, COUNT(*) as comment_count
+    	FROM t_shopping_freeboard_comment
+    	GROUP BY articleNO
+    	) b ON a.articleNO = b.articleNO
+		ORDER BY a.free_writeDate DESC
+		]]>
+	 </select>
+	
+	<insert id="insertNewFreeboard"  parameterType="java.util.Map">
+		<selectKey resultType="int" keyProperty="articleNO" order="BEFORE">
+			SELECT ifnull(max(articleNO)+1, 1) from t_shopping_freeboard;
+		</selectKey>
+  		
+  		<![CDATA[
+    	insert into t_shopping_freeboard(articleNO,
+				 					 member_id,
+                                     free_title,
+                                     free_img,
+                                     free_content,
+                                     free_writeDate,
+                                     free_img_id
+                                     
+                                     )
+							 values(#{articleNO},
+									#{member_id},
+									#{free_title},
+                                   	#{free_img}, 
+                                    #{free_content},
+                                    now(),
+                                    #{free_img_id}
+                                    
+                                    )
+                                                               
+  		 ]]>      
+  	</insert>
+  	
+  	<insert id="insertFreeboardImage" parameterType="java.util.Map">
+	  <![CDATA[
+     insert into t_shopping_image
+        (image_id,fileName, fileType, reg_id)
+      values(
+           #{free_img_id},
+          #{free_img},
+            'freeboard',
+            #{member_id}
+            )
+     ]]>
+
+	</insert>
+  	
+  	<select id="selectFreeboardWriter" resultMap="freeboardResult" parameterType="String">
+       <![CDATA[
+        select member_id from t_shopping_freeboard
+        where articleNO=#{articleNO};
+       ]]>
+   </select>
+  	
+	
+	<select id="selectFreeboardDetail" resultMap="freeboardResult"   parameterType="String">
+       <![CDATA[
+        select * from t_shopping_freeboard
+        where articleNO=#{articleNO};
+       ]]>
+   </select>
+   
+   <select id="selectAllComment" resultMap="commentResult"   parameterType="String">
+       <![CDATA[
+  		select * from t_shopping_freeboard_comment
+        where articleNO=#{articleNO};
+       ]]>
+   </select>
+   
+   <insert id="insertCommnet" parameterType="CommentVO">
+	  <![CDATA[
+     insert into t_shopping_freeboard_comment
+        (member_id,free_comment, free_commentDate, articleNO)
+      values(
+           #{member_id},
+           #{free_comment},
+            now(),
+            #{articleNO}
+            )
+     ]]>
+
+	</insert>
+	
+	<update id="updateViewCnt">
+    update  t_shopping_freeboard
+    set free_view_count = free_view_count +1
+    where articleNO = #{articleNO}
+	</update>
+	
+	<delete id="deleteFreeboard" parameterType="java.util.Map">
+	    <![CDATA[
+	      delete from t_shopping_freeboard
+	      where member_id=#{member_id} and articleNO=#{articleNO}
+    	]]>
+	</delete>
+	
+	<delete id="deleteFreeboardImage" parameterType="java.util.Map">
+	    <![CDATA[
+	      delete from t_shopping_image
+	      where image_id=#{free_img_id}
+    	]]>
+	</delete>
+	
+	
+	<insert id="insertNewQna"  parameterType="QnaVO">
+	   <selectKey resultType="int" keyProperty="articleNO" order="BEFORE">
+       SELECT ifnull(max(articleNO)+1, 1) from t_shopping_qna;
+   </selectKey>
+     
+  		<![CDATA[
+    	insert into t_shopping_qna(	articleNO,
+				 					member_id,
+                                    qna_title,
+                                    qna_content,
+                                    qna_writeDate
+                                     )
+							 values(#{articleNO},
+									#{member_id},
+									#{qna_title},
+                                   	#{qna_content}, 
+                                    now()
+                               
+                                    )
+                                                               
+  		 ]]>      
+   </insert>
+   
+   <select id="selectMyQnaList" resultMap="qnaResult" parameterType="String">
+		<![CDATA[
+		SELECT * 
+		FROM t_shopping_qna
+		WHERE member_id = #{member_id}
+		]]>
+	 </select>
+	 
+	    <select id="selectAllQnaList" resultMap="qnaResult" parameterType="String">
+		<![CDATA[
+		SELECT * 
+		FROM t_shopping_qna order by qna_writeDate desc;
+		]]>
+	 </select>
+	 
+	 	<select id="selectQna" resultMap="qnaResult" parameterType="String">
+		<![CDATA[
+		SELECT * 
+		FROM t_shopping_qna
+		WHERE articleNO = #{articleNO}
+		]]>
+	 </select>
+	 
+	 
+	 <update id="updateQnaAnswer" parameterType="java.util.Map">
+	  <![CDATA[
+     	update t_shopping_qna
+     	set 
+        	qna_answer=#{qna_answer}
+        where articleNO=#{articleNO}          
+     ]]>
+	</update>
+	 
+   <update id="updateFreeboard" parameterType="java.util.Map">
+ 		<![CDATA[
+ 			update t_shopping_freeboard
+ 			set free_title=#{free_title}, 
+ 				free_img=#{free_img},
+ 				free_content=#{free_content},
+ 				dir_main_img_id=#{dir_main_img_id}
+ 			]]>
+ 			<if test="imageFileName!='' and imageFileName!=null">
+ 				<![CDATA[ ,imageFileName=#{imageFileName} ]]>
+ 			</if>
+ 		<![CDATA[
+ 			where dir_no=#{dir_no}
+ 		 ]]>
+ 	</update>
+ 	
+ 	<update id="updateFreeboardImage" parameterType="java.util.Map">
+	  <![CDATA[
+     	update t_shopping_image
+     	set 
+        	image_id=#{dir_main_img_id},
+        	fileName=#{dir_main_img} 
+        	
+        where reg_id=#{member_id}       
+     ]]>
+	</update>
+  
+  
+  <insert id="insertNewInfo"  parameterType="java.util.Map">
+		<selectKey resultType="int" keyProperty="articleNO" order="BEFORE">
+			SELECT ifnull(max(articleNO)+1, 1) from t_shopping_infoboard;
+		</selectKey>
+  		
+  		<![CDATA[
+    	insert into t_shopping_infoboard(articleNO,
+				 					 member_id,
+                                     info_title,
+                                     info_img,
+                                     info_content,
+                                     info_img_id
+                                     
+                                     )
+							 values(#{articleNO},
+									#{member_id},
+									#{info_title},
+                                   	#{info_img}, 
+                                    #{info_content},
+                                    #{info_img_id}
+                                    
+                                    )
+                                                               
+  		 ]]>      
+  	</insert>
+  	
+  	<insert id="insertInfoImage" parameterType="java.util.Map">
+	  <![CDATA[
+     insert into t_shopping_image
+        (image_id,fileName, fileType, reg_id)
+      values(
+           #{info_img_id},
+          #{info_img},
+            'info',
+            #{member_id}
+            )
+     ]]>
+	</insert>
+	
+	<select id="selectALLInfoboardList" resultMap="infoResult" parameterType="String">
+		<![CDATA[
+		SELECT * 
+		FROM t_shopping_infoboard
+		WHERE member_id = #{member_id}
+		]]>
+	</select>
+	 
+	<select id="admininfoDetail" resultMap="infoResult"   parameterType="String">
+       <![CDATA[
+        select * from t_shopping_infoboard
+        where articleNO=#{articleNO}
+       ]]>
+    </select>
+    
+    <select id="selectAllinfo" resultMap="infoResult"   parameterType="String">
+       <![CDATA[
+        select * from t_shopping_infoboard
+       ]]>
+    </select>
+    
+    <delete id="deleteInfoboard" parameterType="java.util.Map">
+	    <![CDATA[
+	      delete from t_shopping_infoboard
+	      where articleNO=#{articleNO}
+    	]]>
+	</delete>
+	
+	<delete id="deleteInfoboardImage" parameterType="java.util.Map">
+	    <![CDATA[
+	      delete from t_shopping_image
+	      where image_id=#{info_img_id}
+    	]]>
+	</delete>
+	
+	
+	<update id="updateInfo" parameterType="java.util.Map">
+ 		<![CDATA[
+ 			update t_shopping_infoboard
+ 			set info_title=#{info_title}, 
+ 				info_img=#{info_img},
+ 				info_content=#{info_content},
+ 				info_img_id=#{info_img_id}
+ 			]]>
+ 			<if test="imageFileName!='' and imageFileName!=null">
+ 				<![CDATA[ ,imageFileName=#{imageFileName} ]]>
+ 			</if>
+ 		<![CDATA[
+ 			where articleNO=#{articleNO}
+ 		 ]]>
+ 	</update>
+ 	
+ 	<update id="updateInfoImage" parameterType="java.util.Map">
+	  <![CDATA[
+     	update t_shopping_image
+     	set 
+        	image_id=#{info_img_id},
+        	fileName=#{info_img} 
+        	
+        where reg_id=#{member_id}   and image_id = #{info_img_id}       
+     ]]>
+	</update>
+	
+	<select id="selectAllfreeboard" resultMap="freeboardResult"   parameterType="String">
+       <![CDATA[
+        select * from t_shopping_freeboard
+       ]]>
+    </select>
+    
+	<delete id="adminDelFreeboard" parameterType="java.util.Map">
+		<![CDATA[
+	      delete from t_shopping_freeboard
+	      where articleNO=#{articleNO}
+    	]]>
+	</delete>
+	
+	<delete id="adminDelFreeboardImage" parameterType="java.util.Map">
+	    <![CDATA[
+	      delete from t_shopping_image
+	      where image_id=#{free_img_id}
+    	]]>
+	</delete>
+</mapper>

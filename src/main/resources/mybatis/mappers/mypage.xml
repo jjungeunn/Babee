@@ -1,0 +1,265 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.babee.mypage.dao.MyPageDAO">
+<resultMap id="goodsResult" type="GoodsVO">
+      <result property="goods_id" column="goods_id" />
+      <result property="goods_title" column="goods_title" />
+      <result property="goods_price" column="goods_price" />
+      <result property="goods_stock" column="goods_stock" />
+      <result property="main_category" column="main_category" />
+      <result property="middle_category" column="middle_category" />
+      <result property="sub_category" column="sub_category" />
+      <result property="seller_id" column="seller_id" />
+      <result property="goods_delivery_price" column="goods_delivery_price" />
+      <result property="goods_image_name1" column="goods_image_name1" />
+      <result property="goods_image_name1_id" column="goods_image_name1_id" />
+      <result property="goods_image_name2" column="goods_image_name2" />
+      <result property="goods_image_name2_id" column="goods_image_name2_id" />
+      <result property="age_range" column="age_range" />
+      <result property="goods_creation_date" column="goods_creation_date" />
+      <result property="related_tags" column="related_tags" />
+      <result property="tag_option1" column="tag_option1" />
+      <result property="tag_option2" column="tag_option2" />
+      <result property="tag_option3" column="tag_option3" />
+      <result property="tag_option4" column="tag_option4" />
+      <result property="tag_option5" column="tag_option5" />
+      <result property="buycnt" column="buycnt" />
+      <result property="buyprice" column="buyprice" />
+   </resultMap>
+
+	<resultMap id="orderGoodsResult" type="OrderVO">
+		<result property="order_id" column="order_id" />
+		<result property="member_id" column="member_id" />
+		<result property="goods_id" column="goods_id" />
+		<result property="orderNO" column="orderNO" />
+		<result property="total_goods_price" column="total_goods_price" />
+		<result property="order_goods_qty" column="order_goods_qty" />
+		<result property="recipient_name" column="recipient_name" />
+		<result property="recipient_hp" column="recipient_hp" />
+		<result property="recipient_tel" column="recipient_tel" />
+		<result property="deliveryAddr" column="deliveryAddr" />
+		<result property="deliveryMessage" column="deliveryMessage" />
+		<result property="trackingNum" column="trackingNum" />
+		<result property="payment_method" column="payment_method" />
+		<result property="card_com_name" column="card_com_name" />
+		<result property="payment_order_time" column="payment_order_time" />
+		<result property="delivery_status" column="delivery_status" />
+		<result property="final_total_price" column="final_total_price" />
+		<result property="goods_option" column="goods_option" />
+	</resultMap> 
+	
+	<resultMap id="wishResult" type="WishVO">
+      <result property="articleNO" column="articleNO" />
+      <result property="member_id" column="member_id" />
+      <result property="goods_id" column="goods_id" />
+      <result property="goods_title" column="goods_title" />
+      <result property="goods_price" column="goods_price" />
+      <result property="goods_image_name1" column="goods_image_name1" />
+   </resultMap>
+	<resultMap id="reviewResult" type="reviewVO">
+      <result property="member_id" column="member_id" />
+      <result property="goods_id" column="goods_id" />
+      <result property="goods_star" column="goods_star" />
+      <result property="review_title" column="review_title" />
+      <result property="review_content" column="review_content" />
+      <result property="review_img" column="review_img" />
+      <result property="review_writeDate" column="review_writeDate" />
+   </resultMap>
+   
+   <resultMap id="refundResult" type="RefundVO">
+    <id property="orderNO" column="orderNO" />
+    <result property="order_id" column="order_id" />
+    <result property="delivery_status" column="delivery_status" />
+    <result property="reason" column="reason" />
+    <result property="goods_id" column="goods_id" />
+    <result property="member_id" column="member_id" />
+    <result property="reason_option" column="reason_option" />
+    <result property="returnPrice" column="returnPrice" />
+</resultMap>
+   <!-- 상품각각조회 -->
+   <select id="refundList" resultType="java.util.Map" parameterType="int" >
+	    <![CDATA[
+		    SELECT
+		      o.*,
+		      g.goods_image_name1,
+		      g.goods_title
+		    FROM
+		      t_shopping_order o
+		    INNER JOIN
+		      t_shopping_goods g
+		    ON
+		      o.goods_id = g.goods_id
+		    WHERE
+		      o.orderNO = #{orderNO}
+    	]]>
+	</select>
+	<!-- 상품목록 (더보기)조회 -->
+	<select id="selectGroupedOrders" resultType="java.util.Map" parameterType="String">
+	  <![CDATA[
+	    SELECT
+	      o.*,
+	      g.goods_title,
+	      g.goods_image_name1
+	    FROM
+	      t_shopping_order o
+	    INNER JOIN
+	      t_shopping_goods g
+	    ON
+	      o.goods_id = g.goods_id
+	    WHERE
+	      o.order_id = #{order_id}
+	  ]]>
+	</select>
+
+	 <select id="selectMyOrderGoodsList" resultMap="orderGoodsResult"  parameterType="String"  >
+	   
+	    <![CDATA[
+			select * from t_shopping_order
+            where member_id=#{member_id}
+            order by payment_order_time desc
+		]]>
+	</select>
+	
+
+	<select id="selectMyOrderInfo" resultMap="orderGoodsResult"  parameterType="String"  >
+	    <![CDATA[
+		    select * from t_shopping_order
+            where order_id=#{order_id}
+    	]]>
+	</select>
+		<select id="selectMyOrderHistoryList" resultMap="orderGoodsResult" parameterType="java.util.Map"  >
+	    <![CDATA[
+		  select * from t_shopping_order
+          where member_id=#{member_id}
+          and  pay_order_time between #{beginDate} and #{endDate}
+          order by pay_order_time desc
+    	]]>
+	</select>	
+	
+	
+	<update id="updateMyOrderCancel" parameterType="int">
+		    <![CDATA[
+	   update t_shopping_order
+	 	  set delivery_status='cancel_order'
+	   where orderNO=#{orderNO}
+	   ]]>
+	</update>
+	<update id="updateBuyCountByOrderNo" parameterType="int">
+	    UPDATE t_shopping_goods AS goods
+	    JOIN t_shopping_order AS orders ON goods.goods_id = orders.goods_id
+	    SET goods.buycnt = goods.buycnt - orders.order_goods_qty
+	    WHERE orders.orderNO = #{orderNO}
+	  </update>
+	
+	<insert id="updateMyOrderRefund" parameterType="refundVO">
+	 <![CDATA[
+	  insert t_shopping_refund values(
+	  		#{orderNO},
+	  		#{order_id},
+		    #{delivery_status},
+	   		#{reason},
+	   		#{goods_id},
+	   		#{member_id},
+	   		#{reason_option},
+	   		#{returnPrice})
+	   		   ]]>
+	</insert>
+	
+	<insert id="insertNewReview" parameterType="java.util.Map">
+	 <![CDATA[
+	  insert t_shopping_review (member_id, goods_id, goods_star, review_title, review_content, review_img, review_writeDate, review_img_id) values(
+	  		#{member_id},
+		    #{goods_id },
+	   		#{goods_star},
+	   		#{review_title},
+	   		#{review_content},
+	   		#{review_img},
+	   		now(),
+	   		#{review_img_id}
+	   		)
+	   		]]>
+	</insert>
+	
+	<insert id="insertImage" parameterType="java.util.Map">
+	 <![CDATA[
+	
+	  insert t_shopping_image (image_id , fileName, fileType, reg_id) values(
+	  		#{review_img_id},
+		    #{review_img},
+	   		'review',
+	   		#{member_id}
+	   		)
+	  ]]>
+	</insert>
+		
+	<select id="selectCountWishList" resultType="boolean" parameterType="wishVO">
+	    <![CDATA[
+		    select if(count(*)=0, 'false', 'true') from t_shopping_wish
+			where goods_id=#{goods_id}
+			  and member_id=#{member_id} 
+    	]]>
+	</select>
+	
+	<insert id="insertWishList" parameterType="wishVO">
+		<selectKey resultType="int" keyProperty="articleNO" order="BEFORE">
+    		select ifnull(max(articleNO)+1, 1) from t_shopping_wish
+		</selectKey>
+	    <![CDATA[
+		    	insert into t_shopping_wish(articleNO,
+		    								member_id,
+		    	                           goods_id)
+		        				 values(#{articleNO},
+		        				 		#{member_id},
+    							        #{goods_id})
+    	]]>
+	</insert>
+		
+	<select id="selectWishList"  parameterType="String"  resultType="WishVO" >
+	    <![CDATA[
+		SELECT	b.goods_title
+			  	,b.goods_price
+		      	,a.goods_id
+		      	,a.articleNO
+		      	,a.member_id
+		FROM 	t_shopping_wish a, t_shopping_goods b
+		WHERE 	a.goods_id = b.goods_id
+		AND 	a.member_id = #{member_id}	
+		]]>
+	</select>
+
+	 <select id="selectWishGoodsList" parameterType="int" resultType="GoodsVO">
+		<![CDATA[
+		 select goods_image_name1 
+		from t_shopping_goods
+		where goods_id=#{goods_id};
+		]]>
+	 </select>
+	 <select id="selectReviewList" resultMap="reviewResult" parameterType="String">
+		<![CDATA[
+		 select * from t_shopping_review where member_id=#{member_id} order by review_writeDate desc
+		]]>
+	 </select>
+	 <select id="selectGoodsReviewList" resultMap="reviewResult" parameterType="String">
+		<![CDATA[
+		 select * from t_shopping_review where goods_id=#{goods_id} order by review_writeDate desc
+		]]>
+	 </select>
+	 
+	 <delete id="deleteWishList" parameterType="int">
+	    <![CDATA[
+	      delete from t_shopping_wish
+	      where articleNO=#{articleNO}
+    	]]>
+	</delete>
+	 <delete id="deleteReview" parameterType="java.util.Map">
+	    <![CDATA[
+	      delete from t_shopping_review
+	      where member_id=#{member_id} and goods_id=#{goods_id}
+    	]]>
+	</delete>
+	 
+</mapper>
+ 

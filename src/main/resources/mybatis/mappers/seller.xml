@@ -1,0 +1,670 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.babee.seller.dao.SellerDAO">
+<!-- 리절트 맵 정의 -->	
+	<resultMap id="sellerResult" type="SellerVO">
+		<result property="seller_id" column="seller_id" />
+		<result property="seller_pw" column="seller_pw" />
+		<result property="seller_name" column="seller_name" />
+		<result property="seller_tel1" column="seller_tel1" />
+		<result property="seller_tel2" column="seller_tel2" />
+		<result property="seller_tel3" column="seller_tel3" />
+		<result property="seller_hp1" column="seller_hp1" />
+		<result property="seller_hp2" column="seller_hp2" />
+		<result property="seller_hp3" column="seller_hp3" />
+		<result property="seller_email" column="seller_email" />
+		 
+		<result property="seller_zipcode" column="seller_zipcode" />
+		<result property="seller_roadAddr" column="seller_roadAddr" />
+		<result property="seller_jibunAddr" column="seller_jibunAddr" />
+		<result property="namujiAddr" column="seller_namujiAddr" />
+		<result property="seller_bank_num" column="seller_bank_num" />
+		<result property="seller_bank_name" column="seller_bank_name" />
+		<result property="seller_bank_com" column="seller_bank_com" />
+		<result property="seller_company" column="seller_company" />
+		<result property="seller_company_info" column="seller_company_info" />
+		<result property="seller_img1" column="seller_img1" />
+		<result property="seller_confirmDate" column="seller_confirmDate" />
+		<result property="seller_joinDate" column="seller_joinDate" />
+		<result property="seller_status" column="seller_status" />
+	</resultMap>	
+	
+	<resultMap id="goodsResult" type="GoodsVO">
+       <result property="goods_id" column="goods_id" />
+       <result property="goods_title" column="goods_title" />
+       <result property="goods_price" column="goods_price" />
+       <result property="goods_stock" column="goods_stock" />
+       <result property="goods_delivery_price" column="goods_delivery_price" />
+       <result property="main_category" column="main_category" />
+       <result property="middle_category" column="middle_category" />
+       <result property="sub_category" column="sub_category" />
+       <result property="seller_id" column="seller_id" />
+       <result property="goods_image_name1" column="goods_image_name1" />
+       <result property="goods_image_name2" column="goods_image_name2" />
+       <result property="age_range" column="age_range" />
+       <result property="goods_creation_date" column="goods_creation_date" />
+       <result property="tag_option1" column="tag_option1" />
+       <result property="tag_option2" column="tag_option2" />
+       <result property="tag_option3" column="tag_option3" />
+       <result property="tag_option4" column="tag_option4" />
+       <result property="tag_option5" column="tag_option5" />
+   </resultMap>
+   
+   <resultMap id="imageResult" type="ImageFileVO">
+      <result property="goods_id" column="goods_id" />
+      <result property="fileName" column="fileName" />
+      <result property="reg_id" column="reg_id" />
+      <result property="image_id" column="image_id" />
+      <result property="fileType" column="fileType" />
+   </resultMap>
+	
+	<resultMap id="orderResult" type="OrderVO">
+	    <id property="order_id" column="order_id"/>
+	    <result property="member_id" column="member_id"/>
+	    <result property="goods_id" column="goods_id"/>
+	    <result property="goods_title" column="goods_title"/>
+	    <result property="goods_price" column="goods_price"/>
+	    <result property="total_goods_price" column="total_goods_price"/>
+	    <result property="order_goods_qty" column="order_goods_qty"/>
+	    <result property="recipient_name" column="recipient_name"/>
+	    <result property="recipient_hp" column="recipient_hp"/>
+	    <result property="recipient_tel" column="recipient_tel"/>
+	    <result property="deliveryAddr" column="deliveryAddr"/>
+	    <result property="deliveryMessage" column="deliveryMessage"/>
+	    <result property="trackingNum" column="trackingNum"/>
+	    <result property="payment_method" column="payment_method"/>
+	    <result property="card_com_name" column="card_com_name"/>
+	    <result property="payment_order_time" column="payment_order_time"/>
+	    <result property="delivery_status" column="delivery_status"/>
+	    <result property="final_total_price" column="final_total_price"/>
+	    <result property="goods_option" column="goods_option"/>
+	    <result property="goods_image_name" column="goods_image_name"/>
+	    <!-- GoodsVO 객체에 대한 매핑 -->
+	    <association property="goods" resultMap="GoodsResultMap"/>
+	</resultMap>
+	
+	<resultMap id="goodsQnaResult" type="GoodsQNA">
+	  <result property="articleNO" column="articleNO" />
+      <result property="goods_id" column="goods_id" />
+      <result property="member_id" column="member_id" />
+      <result property="goods_qna_title" column="goods_qna_title" />
+      <result property="goods_qna_content" column="goods_qna_content" />
+      <result property="goods_qna_writeDate" column="goods_qna_writeDate" />
+      <result property="goods_qna_answer" column="goods_qna_answer" />
+      <result property="seller_id" column="seller_id" />
+   </resultMap>
+   
+   <resultMap id="refundResult" type="RefundVO">
+    <id property="orderNO" column="orderNO" />
+    <result property="order_id" column="order_id" />
+    <result property="delivery_status" column="delivery_status" />
+    <result property="reason" column="reason" />
+    <result property="goods_id" column="goods_id" />
+    <result property="member_id" column="member_id" />
+    <result property="reason_option" column="reason_option" />
+    <result property="returnPrice" column="returnPrice" />
+</resultMap>
+
+	<select id="login" resultType="sellerVO"  parameterType="java.util.Map"  >
+	    <![CDATA[
+			select * from t_shopping_seller 
+			 where seller_id=#{member_id}
+			 and seller_pw=#{member_pw}			
+			 
+		]]>
+	</select>
+	
+	
+  <insert id="insertNewSeller"  parameterType="java.util.Map">
+  <![CDATA[
+    	insert into t_shopping_seller(seller_id,
+				 					 seller_pw,
+                                     seller_name,
+                                     seller_tel1,
+                                     seller_tel2,
+                                     seller_tel3,
+                                     seller_hp1,
+                                     seller_hp2,
+                                     seller_hp3,
+                                     seller_email,
+                                     seller_zipcode,
+                                     seller_roadAddr,
+                                     seller_jibunAddr,
+                                     seller_namujiAddr,
+                                     seller_joinDate,
+                                     seller_bank_num,
+                                     seller_bank_name,
+                                     seller_bank_com,
+									seller_company,
+									seller_company_info,
+									seller_img1,
+									seller_confirmDate
+									
+                                     )
+							 values(#{seller_id},
+									#{seller_pw},
+									#{seller_name},
+                                    #{seller_tel1},
+                                    #{seller_tel2},
+                                    #{seller_tel3},
+                                    #{seller_hp1},
+                                    #{seller_hp2},
+                                    #{seller_hp3},
+                                    #{seller_email},
+                                    #{seller_zipcode},
+                                    #{seller_roadAddr},
+                                    #{seller_jibunAddr},
+                                    #{seller_namujiAddr},
+                                    now(),
+                                       #{seller_bank_num},
+                                      #{seller_bank_name},
+                                     #{ seller_bank_com},
+									 #{seller_company},
+									 #{seller_company_info},
+									 #{seller_img1},
+									 #{seller_confirmDate}
+									
+                                    )
+                              
+   ]]>      
+  </insert>
+ 	
+ 	<update id="updateGoods" parameterType="java.util.Map">
+ 		<![CDATA[
+ 			UPDATE t_shopping_goods
+			SET
+			    goods_title = #{goods_title},
+			    goods_price = #{goods_price},
+			    goods_stock = #{goods_stock},
+			    main_category = #{main_category},
+			    middle_category = #{middle_category},
+			    sub_category = #{sub_category},
+			    goods_image_name1 = #{goods_image_name1},
+			    goods_image_name2 = #{goods_image_name2},
+			    seller_id = #{seller_id},
+			    age_range = #{age_range},
+			    goods_option1 = #{goods_option1},
+			    goods_option2 = #{goods_option2},
+			    goods_option3 = #{goods_option3},
+			    goods_option4 = #{goods_option4},
+			    goods_option5 = #{goods_option5}
+			WHERE
+			    goods_id = #{goods_id};
+ 		 ]]>
+ 	</update>
+ 	
+ 	<update id="updateGoodsImage" parameterType="java.util.Map">
+	  <![CDATA[
+     	update t_shopping_image
+     	set fileName=#{fileName}
+     	]]>
+ 			<if test="detailFile!='' and detailFile!=null">
+ 				<![CDATA[ ,detailFile=#{detailFile} ]]>
+ 			</if>
+      <![CDATA[	
+        where image_id=#{image_id}
+     ]]>
+	</update>
+  
+  <select id="getGoodsInfo" parameterType="int" resultType="java.util.Map">
+        SELECT goods_id, goods_title, goods_price, goods_stock, main_category, middle_category, sub_category, goods_image_name1, goods_image_name2, goods_image_name1_id, goods_image_name2_id, seller_id, age_range, goods_option1, goods_option2, goods_option3, goods_option4, goods_option5
+		FROM t_shopping_goods
+		WHERE goods_id = #{goods_id}
+    </select>
+  
+  <delete id="deleteGoodsImage" parameterType="int">
+       DELETE FROM t_shopping_goods
+       WHERE goods_id = #{goods_id}
+   </delete>
+   
+   <delete id="deleteGoodsImage2" parameterType="int">
+      DELETE FROM t_shopping_image
+	  WHERE image_id = #{goods_image_name1_id};
+   </delete>
+   
+   
+   <select id="adminGoodsList" parameterType="map" resultMap="goodsResult">
+	    SELECT *
+	    FROM t_shopping_goods
+	    WHERE seller_id = #{seller_id}
+	    ORDER BY goods_creation_date DESC
+	    LIMIT #{startIndex}, #{itemsPerPage};
+	</select>
+	<select id="getGoodsListCount" parameterType="string" resultType="int">
+	    SELECT COUNT(*) FROM t_shopping_goods WHERE seller_id = #{seller_id}
+	</select>
+	
+	
+    <!-- 사업자 상품구매리스트 -->
+    <select id="getSellerOrderList" resultType="java.util.Map">
+	    <![CDATA[
+	        SELECT o.*, g.goods_title, g.goods_image_name1
+			FROM t_shopping_order o
+			JOIN t_shopping_goods g ON o.goods_id = g.goods_id
+			WHERE g.seller_id = #{seller_id}
+			ORDER BY o.payment_order_time DESC
+			LIMIT #{startIndex}, #{itemsPerPage};
+	    ]]>
+	  </select>
+	  <select id="getSellerOrderListCount" parameterType="string" resultType="int">
+	    SELECT COUNT(*)
+		FROM t_shopping_order o
+		JOIN t_shopping_goods g ON o.goods_id = g.goods_id
+		WHERE g.seller_id = #{seller_id};
+	</select>
+	  
+	  <!-- 사업자 상품구매리스트(당일) -->
+	  <select id="getSellerOrderListTODAY" resultType="java.util.Map">
+	    <![CDATA[
+			SELECT o.*, g.goods_title, g.goods_image_name1
+			FROM t_shopping_order o
+			JOIN t_shopping_goods g ON o.goods_id = g.goods_id
+			WHERE g.seller_id = #{seller_id}
+			AND DATE(o.payment_order_time) = CURDATE()
+			ORDER BY o.payment_order_time DESC
+			LIMIT #{startIndex}, #{itemsPerPage};
+	    ]]>
+	  </select>
+	  <select id="getSellerOrderListTODAYCount" parameterType="string" resultType="int">
+	    SELECT COUNT(*)
+		FROM t_shopping_order o
+		JOIN t_shopping_goods g ON o.goods_id = g.goods_id
+		WHERE g.seller_id = #{seller_id}
+		AND DATE(o.payment_order_time) = CURDATE();
+	</select>
+	  
+	  
+	  
+	  <!-- 사업자 상품구매리스트(1주일) -->
+	 <select id="getSellerOrderListONEWEEK" resultType="java.util.Map">
+	    <![CDATA[
+			SELECT o.*, g.goods_title, g.goods_image_name1
+			FROM t_shopping_order o
+			JOIN t_shopping_goods g ON o.goods_id = g.goods_id
+			WHERE g.seller_id = #{seller_id}
+			AND DATE(o.payment_order_time) >= DATE_SUB(CURDATE(), INTERVAL 1 WEEK)
+			AND DATE(o.payment_order_time) <= CURDATE()
+			ORDER BY o.payment_order_time DESC
+			LIMIT #{startIndex}, #{itemsPerPage};
+	    ]]>
+	  </select>
+	  <select id="getSellerOrderListONEWEEKCount" parameterType="string" resultType="int">
+	  <![CDATA[
+	    SELECT COUNT(*)
+		FROM t_shopping_order o
+		JOIN t_shopping_goods g ON o.goods_id = g.goods_id
+		WHERE g.seller_id = #{seller_id}
+		AND DATE(o.payment_order_time) >= DATE_SUB(CURDATE(), INTERVAL 1 WEEK)
+		AND DATE(o.payment_order_time) <= CURDATE()
+		]]>
+	</select>
+	  
+	  
+	  <!-- 사업자 상품구매리스트(2주일) -->
+	  <select id="getSellerOrderListTWOWEEK" resultType="java.util.Map">
+	    <![CDATA[
+			SELECT o.*, g.goods_title, g.goods_image_name1
+			FROM t_shopping_order o
+			JOIN t_shopping_goods g ON o.goods_id = g.goods_id
+			WHERE g.seller_id = #{seller_id}
+			AND DATE(o.payment_order_time) >= DATE_SUB(CURDATE(), INTERVAL 2 WEEK)
+			AND DATE(o.payment_order_time) <= CURDATE()
+			ORDER BY o.payment_order_time DESC
+			LIMIT #{startIndex}, #{itemsPerPage};
+	    ]]>
+	  </select>
+	  <select id="getSellerOrderListTWOWEEKCount" parameterType="string" resultType="int">
+	  <![CDATA[
+	    SELECT COUNT(*)
+		FROM t_shopping_order o
+		JOIN t_shopping_goods g ON o.goods_id = g.goods_id
+		WHERE g.seller_id = #{seller_id}
+		AND DATE(o.payment_order_time) >= DATE_SUB(CURDATE(), INTERVAL 2 WEEK)
+		AND DATE(o.payment_order_time) <= CURDATE()
+		]]>
+	</select>
+	  
+	  <!-- 사업자 상품구매리스트(1달) -->
+	  <select id="getSellerOrderListONEMONTH" resultType="java.util.Map">
+	    <![CDATA[
+			SELECT o.*, g.goods_title, g.goods_image_name1
+			FROM t_shopping_order o
+			JOIN t_shopping_goods g ON o.goods_id = g.goods_id
+			WHERE g.seller_id = #{seller_id}
+			AND DATE(o.payment_order_time) >= DATE_SUB(CURDATE(), INTERVAL 1 MONTH)
+			AND DATE(o.payment_order_time) <= CURDATE()
+			ORDER BY o.payment_order_time DESC
+			LIMIT #{startIndex}, #{itemsPerPage};
+	    ]]>
+	  </select>
+	  <select id="getSellerOrderListONEMONTHCount" parameterType="string" resultType="int">
+	  <![CDATA[
+	    SELECT COUNT(*)
+		FROM t_shopping_order o
+		JOIN t_shopping_goods g ON o.goods_id = g.goods_id
+		WHERE g.seller_id = #{seller_id}
+		AND DATE(o.payment_order_time) >= DATE_SUB(CURDATE(), INTERVAL 1 MONTH)
+		AND DATE(o.payment_order_time) <= CURDATE()
+		]]>
+	</select>
+	  
+	  <!-- 사업자 상품구매리스트(2달) -->
+	  <select id="getSellerOrderListTWOMONTH" resultType="java.util.Map">
+	    <![CDATA[
+			SELECT o.*, g.goods_title, g.goods_image_name1
+			FROM t_shopping_order o
+			JOIN t_shopping_goods g ON o.goods_id = g.goods_id
+			WHERE g.seller_id = #{seller_id}
+			AND DATE(o.payment_order_time) >= DATE_SUB(CURDATE(), INTERVAL 2 MONTH)
+			AND DATE(o.payment_order_time) <= CURDATE()
+			ORDER BY o.payment_order_time DESC
+			LIMIT #{startIndex}, #{itemsPerPage};
+	    ]]>
+	  </select>
+	  <select id="getSellerOrderListTWOMONTHCount" parameterType="string" resultType="int">
+	  <![CDATA[
+	    SELECT COUNT(*)
+		FROM t_shopping_order o
+		JOIN t_shopping_goods g ON o.goods_id = g.goods_id
+		WHERE g.seller_id = #{seller_id}
+		AND DATE(o.payment_order_time) >= DATE_SUB(CURDATE(), INTERVAL 2 MONTH)
+		AND DATE(o.payment_order_time) <= CURDATE()
+		]]>
+	</select>
+	  
+	  <!-- 사업자 상품구매리스트(3달) -->
+	  <select id="getSellerOrderListTHREEMONTH" resultType="java.util.Map">
+	    <![CDATA[
+			SELECT o.*, g.goods_title, g.goods_image_name1
+			FROM t_shopping_order o
+			JOIN t_shopping_goods g ON o.goods_id = g.goods_id
+			WHERE g.seller_id = #{seller_id}
+			AND DATE(o.payment_order_time) >= DATE_SUB(CURDATE(), INTERVAL 3 MONTH)
+			AND DATE(o.payment_order_time) <= CURDATE()
+			ORDER BY o.payment_order_time DESC
+			LIMIT #{startIndex}, #{itemsPerPage};
+	    ]]>
+	  </select>
+	  <select id="getSellerOrderListTHREEMONTHCount" parameterType="string" resultType="int">
+	  <![CDATA[
+	    SELECT COUNT(*)
+		FROM t_shopping_order o
+		JOIN t_shopping_goods g ON o.goods_id = g.goods_id
+		WHERE g.seller_id = #{seller_id}
+		AND DATE(o.payment_order_time) >= DATE_SUB(CURDATE(), INTERVAL 3 MONTH)
+		AND DATE(o.payment_order_time) <= CURDATE()
+		]]>
+	</select>
+	  
+	  <!-- 사업자 상품구매리스트(4달) -->
+	  <select id="getSellerOrderListFOURMONTH" resultType="java.util.Map">
+	    <![CDATA[
+			SELECT o.*, g.goods_title, g.goods_image_name1
+			FROM t_shopping_order o
+			JOIN t_shopping_goods g ON o.goods_id = g.goods_id
+			WHERE g.seller_id = #{seller_id}
+			AND DATE(o.payment_order_time) >= DATE_SUB(CURDATE(), INTERVAL 4 MONTH)
+			AND DATE(o.payment_order_time) <= CURDATE()
+			ORDER BY o.payment_order_time DESC
+			LIMIT #{startIndex}, #{itemsPerPage};
+	    ]]>
+	  </select>
+	  <select id="getSellerOrderListFOURMONTHCount" parameterType="string" resultType="int">
+	  <![CDATA[
+	    SELECT COUNT(*)
+		FROM t_shopping_order o
+		JOIN t_shopping_goods g ON o.goods_id = g.goods_id
+		WHERE g.seller_id = #{seller_id}
+		AND DATE(o.payment_order_time) >= DATE_SUB(CURDATE(), INTERVAL 4 MONTH)
+		AND DATE(o.payment_order_time) <= CURDATE()
+		]]>
+	</select>
+	  
+	  <!-- 사업자 상품구매리스트(기간정하기) -->
+	  <select id="getSellerOrderListDATE" resultType="java.util.Map">
+	    <![CDATA[
+			SELECT o.*, g.goods_title, g.goods_image_name1
+			FROM t_shopping_order o
+			JOIN t_shopping_goods g ON o.goods_id = g.goods_id
+			WHERE g.seller_id = #{seller_id}
+			  AND DATE(o.payment_order_time) >= #{startDate}
+			  AND DATE(o.payment_order_time) <= #{endDate}
+			   LIMIT #{startIndex}, #{itemsPerPage};
+	    ]]>
+	  </select>
+	  <select id="getSellerOrderListDATECount" parameterType="string" resultType="int">
+		<![CDATA[
+		    SELECT COUNT(*) 
+			FROM t_shopping_order o 
+			JOIN t_shopping_goods g ON o.goods_id = g.goods_id 
+			WHERE g.seller_id = #{seller_id} 
+			AND DATE(o.payment_order_time) >= #{startDate} 
+			AND DATE(o.payment_order_time) <= #{endDate};
+		      ]]>
+		</select>
+	  
+  
+    <!-- 날짜 -->
+    <!-- 당일 상품 -->
+    <select id="getTodayGoods" resultType="java.util.Map">
+	    SELECT *
+        FROM t_shopping_goods
+        WHERE DATE(goods_creation_date) = CURDATE()
+        AND seller_id = #{seller_id}
+        LIMIT #{startIndex}, #{itemsPerPage};
+	</select>
+	<select id="getTodayGoodsCount" parameterType="string" resultType="int">
+	    SELECT COUNT(*) FROM t_shopping_goods
+		WHERE DATE(goods_creation_date) = CURDATE()
+		AND seller_id = #{seller_id};
+	</select>
+	
+	<!-- 1주 -->
+	<select id="getOneWeekGoods" resultType="java.util.Map">
+	<![CDATA[
+	    SELECT *
+        FROM t_shopping_goods
+        WHERE DATE(goods_creation_date) >= DATE_SUB(CURDATE(), INTERVAL 7 DAY)
+	      AND DATE(goods_creation_date) <= CURDATE()
+	      AND seller_id = #{seller_id}
+         LIMIT #{startIndex}, #{itemsPerPage};
+         ]]>
+	</select>
+	<select id="getOneWeekGoodsCount" parameterType="string" resultType="int">
+	<![CDATA[
+	    SELECT COUNT(*) FROM t_shopping_goods
+		WHERE DATE(goods_creation_date) >= DATE_SUB(CURDATE(), INTERVAL 7 DAY)
+	      AND DATE(goods_creation_date) <= CURDATE()
+	      AND seller_id = #{seller_id}
+	      ]]>
+	</select>
+	
+	<!-- 2주 -->
+	<select id="getTwoWeekGoods" resultType="java.util.Map">
+	  <![CDATA[
+    SELECT *
+        FROM t_shopping_goods
+        WHERE DATE(goods_creation_date) >= DATE_SUB(CURDATE(), INTERVAL 14 DAY)
+	      AND DATE(goods_creation_date) <= CURDATE()
+	      AND seller_id = #{seller_id}
+         LIMIT #{startIndex}, #{itemsPerPage};
+    ]]>
+	</select>
+	<select id="getTwoWeekGoodsCount" parameterType="string" resultType="int">
+	<![CDATA[
+	    SELECT COUNT(*) FROM t_shopping_goods
+		WHERE DATE(goods_creation_date) >= DATE_SUB(CURDATE(), INTERVAL 14 DAY)
+	      AND DATE(goods_creation_date) <= CURDATE()
+	      AND seller_id = #{seller_id}
+	      ]]>
+	</select>
+	<!-- 1개월 -->
+	<select id="getOneMonthGoods" resultType="java.util.Map">
+	  <![CDATA[
+    SELECT *
+    FROM t_shopping_goods
+    WHERE DATE(goods_creation_date) >= DATE_SUB(CURDATE(), INTERVAL 1 MONTH)
+      AND DATE(goods_creation_date) <= CURDATE()
+      AND seller_id = #{seller_id}
+      LIMIT #{startIndex}, #{itemsPerPage};
+    ]]>
+	</select>
+	<select id="getOneMonthGoodsCount" parameterType="string" resultType="int">
+	<![CDATA[
+	    SELECT COUNT(*) FROM t_shopping_goods
+		WHERE DATE(goods_creation_date) >= DATE_SUB(CURDATE(), INTERVAL 1 MONTH)
+        AND DATE(goods_creation_date) <= CURDATE()
+	      AND seller_id = #{seller_id}
+	      ]]>
+	</select>
+	<!-- 2개월 -->
+	<select id="getTwoMonthGoods" resultType="java.util.Map">
+	  <![CDATA[
+    SELECT *
+    FROM t_shopping_goods
+    WHERE DATE(goods_creation_date) >= DATE_SUB(CURDATE(), INTERVAL 2 MONTH)
+      AND DATE(goods_creation_date) <= CURDATE()
+      AND seller_id = #{seller_id}
+      LIMIT #{startIndex}, #{itemsPerPage};
+    ]]>
+	</select>
+	<select id="getTwoMonthGoodsCount" parameterType="string" resultType="int">
+	<![CDATA[
+	    SELECT COUNT(*) FROM t_shopping_goods
+		WHERE DATE(goods_creation_date) >= DATE_SUB(CURDATE(), INTERVAL 2 MONTH)
+        AND DATE(goods_creation_date) <= CURDATE()
+	      AND seller_id = #{seller_id}
+	      ]]>
+	</select>
+	<!-- 3개월 -->
+	<select id="getThreeMonthGoods" resultType="java.util.Map">
+	  <![CDATA[
+    SELECT *
+    FROM t_shopping_goods
+    WHERE DATE(goods_creation_date) >= DATE_SUB(CURDATE(), INTERVAL 3 MONTH)
+      AND DATE(goods_creation_date) <= CURDATE()
+      AND seller_id = #{seller_id}
+      LIMIT #{startIndex}, #{itemsPerPage};
+    ]]>
+	</select>
+	<select id="getThreeMonthGoodsCount" parameterType="string" resultType="int">
+	<![CDATA[
+	    SELECT COUNT(*) FROM t_shopping_goods
+		WHERE DATE(goods_creation_date) >= DATE_SUB(CURDATE(), INTERVAL 3 MONTH)
+        AND DATE(goods_creation_date) <= CURDATE()
+	      AND seller_id = #{seller_id}
+	      ]]>
+	</select>
+	<!-- 4개월 -->
+	<select id="getFourMonthGoods" resultType="java.util.Map">
+	  <![CDATA[
+    SELECT *
+    FROM t_shopping_goods
+    WHERE DATE(goods_creation_date) >= DATE_SUB(CURDATE(), INTERVAL 4 MONTH)
+      AND DATE(goods_creation_date) <= CURDATE()
+      AND seller_id = #{seller_id}
+      LIMIT #{startIndex}, #{itemsPerPage};
+    ]]>
+	</select>
+	<select id="getFourMonthGoodsCount" parameterType="string" resultType="int">
+	<![CDATA[
+	    SELECT COUNT(*) FROM t_shopping_goods
+		WHERE DATE(goods_creation_date) >= DATE_SUB(CURDATE(), INTERVAL 4 MONTH)
+        AND DATE(goods_creation_date) <= CURDATE()
+	      AND seller_id = #{seller_id}
+	      ]]>
+	</select>
+	
+	<!-- 기간 상품 검색 -->
+	<select id="getDateGoods" resultMap="goodsResult">
+	<![CDATA[
+	SELECT *
+    FROM t_shopping_goods
+    WHERE DATE(goods_creation_date) >= #{startDate}
+    AND DATE(goods_creation_date) <= #{endDate}
+    AND seller_id = #{seller_id}
+    LIMIT #{startIndex}, #{itemsPerPage};
+	]]>
+	</select>
+	<select id="getDateGoodsCount" parameterType="string" resultType="int">
+	<![CDATA[
+	    SELECT COUNT(*)
+		FROM t_shopping_goods
+		WHERE DATE(goods_creation_date) >= #{startDate}
+		AND DATE(goods_creation_date) <= #{endDate}
+		AND seller_id = #{seller_id}
+	      ]]>
+	</select>
+	
+	<!-- 사업자 주문상태변경 -->
+	<update id="updateDeliveryStatus" parameterType="java.util.Map">
+	    UPDATE t_shopping_order
+	    SET delivery_status = #{delivery_status}
+	    WHERE orderNO = #{orderNO}
+	</update>
+    
+    <!-- 사업자 상품qna 리스트 -->
+    
+    <select id="selectAllGoodsQna" resultType="GoodsQNA"  parameterType="java.util.Map">
+	    SELECT gsq.*
+        FROM T_SHOPPING_GOODSQNA gsq
+        JOIN T_SHOPPING_GOODS gs ON gsq.goods_id = gs.goods_id
+        WHERE gs.seller_id = #{seller_id} 
+        LIMIT #{startIndex}, #{itemsPerPage};
+	</select>
+	<select id="selectAllGoodsQnaCount" parameterType="string" resultType="int">
+	<![CDATA[
+	    SELECT COUNT(*)
+		FROM T_SHOPPING_GOODSQNA gsq
+		JOIN T_SHOPPING_GOODS gs ON gsq.goods_id = gs.goods_id
+		WHERE gs.seller_id = #{seller_id}
+	      ]]>
+	</select>
+    <!-- 사업자 상품qna 답변-->
+    <update id="GoodsQnaAnswer" parameterType="java.util.Map">
+	  UPDATE t_shopping_goodsqna
+	  SET goods_qna_answer = #{goods_qna_answer}, seller_id = #{seller_id}
+	  WHERE articleNO = #{articleNO}
+	</update>
+    <update id="modSeller" parameterType="sellerVO">
+	  UPDATE t_shopping_seller
+	  SET
+            seller_pw = #{seller_pw},
+            seller_name = #{seller_name},
+            seller_tel1 = #{seller_tel1},
+            seller_tel2 = #{seller_tel2},
+            seller_tel3 = #{seller_tel3},
+            seller_hp1 = #{seller_hp1},
+            seller_hp2 = #{seller_hp2},
+            seller_hp3 = #{seller_hp3},
+            seller_email = #{seller_email},
+            seller_zipcode = #{seller_zipcode},
+            seller_roadAddr = #{seller_roadAddr},
+            seller_jibunAddr = #{seller_jibunAddr},
+            seller_namujiAddr = #{seller_namujiAddr},
+            seller_bank_num = #{seller_bank_num},
+            seller_bank_name= #{seller_bank_name},
+            seller_bank_com= #{seller_bank_com},
+            seller_company= #{seller_company},
+            seller_company_info= #{seller_company_info},
+            seller_bank_name= #{seller_bank_name},
+            seller_img1 = #{seller_img1}
+           
+     	   WHERE seller_id = #{seller_id}
+	</update>
+	
+	
+	<select id="sellerOrderInfo" resultType="java.util.Map" parameterType="java.util.Map">
+	  <![CDATA[
+	    SELECT o.*, g.goods_title, r.returnPrice, r.delivery_status, s.seller_name
+		FROM t_shopping_order AS o
+		INNER JOIN t_shopping_goods AS g ON o.goods_id = g.goods_id
+		LEFT JOIN t_shopping_refund AS r ON o.orderNO = r.orderNO
+		INNER JOIN t_shopping_seller AS s ON g.seller_id = s.seller_id
+		WHERE g.seller_id = #{seller_id}
+		AND o.order_id = #{order_id}
+	  ]]>
+	</select>
+</mapper>
