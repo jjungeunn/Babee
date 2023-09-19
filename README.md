@@ -13,3 +13,5 @@
 - 데이터베이스: MySQL 8.0
 - IDE: Eclipse
 - API: 카카오 로그인, 네이버 로그인, 우편번호, 카카오맵, 이메일, 카카오페이, 카카오채널
+
+![image](https://github.com/jjungeunn/Babee/assets/106125129/22812ed4-360b-4fae-b53b-bbc4da60a14b)
